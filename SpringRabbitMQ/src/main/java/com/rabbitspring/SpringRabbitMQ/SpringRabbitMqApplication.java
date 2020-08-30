@@ -18,6 +18,8 @@ public class SpringRabbitMqApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		rabbitTemplate.convertAndSend("TestExchange","testRouting","Sample Spring Message");
+		SimpleMessage message = SimpleMessage.builder()
+				.name("simple_name").value("simple_value").build();
+		rabbitTemplate.convertAndSend("TestExchange","testRouting",message);
 	}
 }
