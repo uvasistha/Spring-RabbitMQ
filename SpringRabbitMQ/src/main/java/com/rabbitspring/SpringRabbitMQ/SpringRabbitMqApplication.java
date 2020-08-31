@@ -20,6 +20,6 @@ public class SpringRabbitMqApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		SimpleMessage message = SimpleMessage.builder()
 				.name("simple_name").value("simple_value").build();
-		rabbitTemplate.convertAndSend("TestExchange","testRouting",message);
+		rabbitTemplate.convertAndSend("sampleTopicExchange","sample",message);
 	}
 }
