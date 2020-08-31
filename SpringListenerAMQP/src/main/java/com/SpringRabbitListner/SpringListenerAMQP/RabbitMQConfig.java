@@ -1,7 +1,7 @@
 package com.SpringRabbitListner.SpringListenerAMQP;
 
 
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.MessageListenerContainer;
@@ -16,8 +16,25 @@ public class RabbitMQConfig {
 
     //Creating Queue for rabbitMQ
     @Bean
-    Queue sampleQueue(){
+    Queue configQueue(){
         return new Queue(sampleQueue,true);
+    }
+
+    //Create Exchange
+    @Bean
+    Exchange configExchange(){
+        return ExchangeBuilder.topicExchange("sampleTopicExchange").autoDelete().durable(true).build();
+    }
+
+    //Binding sampleQueue to sampleTopicExchange with sample routingKey
+    @Bean
+    Binding configBinding(){
+       // return new Binding(sampleQueue,Binding.DestinationType.QUEUE,"sample topic exchange","sample",null);
+        return BindingBuilder
+                .bind(configQueue())
+                .to(configExchange())
+                .with("sample")
+                .noargs();
     }
 
     //Creating connection to broker
@@ -34,7 +51,7 @@ public class RabbitMQConfig {
     MessageListenerContainer messageListenerContainer(){
         SimpleMessageListenerContainer simpleMessageListenerContainer = new SimpleMessageListenerContainer();
         simpleMessageListenerContainer.setConnectionFactory(connectionFactory());
-        simpleMessageListenerContainer.setQueues(sampleQueue());
+        simpleMessageListenerContainer.setQueues(configQueue());
         simpleMessageListenerContainer.setMessageListener(new SimpleListener());
         return  simpleMessageListenerContainer;
     }
